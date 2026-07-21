@@ -113,6 +113,11 @@ function Application:boot()
         if p.boot then p:boot(self) end
     end
 
+    -- Apply config-driven window settings. conf.lua runs before
+    -- main.lua so we can't read it from there; we override the title
+    -- and other window details from config now that we have it.
+    self:applyWindowConfig()
+
     self.booted = true
     self:emit("app:booted", self)
 
@@ -121,6 +126,17 @@ function Application:boot()
     local boot = config:get("scenes.boot", "BootScene")
     if boot then
         self:make("scenes"):push(boot)
+    end
+end
+
+-- Apply window-level settings from config/game.lua. Anything you put
+-- there is treated as the source of truth at runtime.
+function Application:applyWindowConfig()
+    if not love or not love.window then return end
+    local config = self:make("config")
+    local title = config:get("game.title")
+    if title and type(title) == "string" then
+        love.window.setTitle(title)
     end
 end
 

@@ -64,7 +64,13 @@ Open `config/game.lua`. Change `title` to your game's name:
 title = "Pocket Dungeon",
 ```
 
-Run again. The window title bar updates.
+Run again. The window title bar updates to "Pocket Dungeon".
+
+> **Why this works**: `conf.lua` sets a default title early, but the
+> framework re-applies `config/game.lua.title` on boot via
+> `love.window.setTitle(...)`. So `config/game.lua` is the source of
+> truth for runtime display, while `conf.lua` is only for engine-level
+> setup that has to happen before `main.lua`.
 
 ## 5. Add a new scene
 

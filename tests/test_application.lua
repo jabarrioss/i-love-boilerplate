@@ -9,6 +9,9 @@
 
 local Test = require("tests.TestCase")
 
+-- Spy table shared across tests that exercise the window title.
+local TitleSpy = { value = nil }
+
 -- Build a minimal `love` global so require()s during boot don't crash.
 local function stubLove()
     local saved = {}
@@ -48,7 +51,7 @@ local function stubLove()
             remove  = function() return true end,
         },
         timer    = { getDelta = function() return 0.016 end, getTime = function() return 0 end, getFPS = function() return 60 end, step = function() return 0 end },
-        window   = { setMode = function() return true end, getMode = function() return 800, 600 end, getDimensions = function() return 1280, 720 end, setTitle = function() end },
+        window   = { setMode = function() return true end, getMode = function() return 800, 600 end, getDimensions = function() return 1280, 720 end, setTitle = function(t) TitleSpy.value = t end, getTitle = function() return TitleSpy.value end },
         keyboard = { isDown = function() return false end, getKeyRepeat = function() return false end },
         mouse    = { isDown = function() return false end, getPosition = function() return 0, 0 end, isVisible = function() return true end },
         math     = { random = function(a, b) if a and b then return math.random(a, b) elseif a then return math.random() * a else return math.random() end end, setRandomSeed = function() end },
@@ -75,6 +78,7 @@ local TestApplication = Test:extend("TestApplication")
 
 function TestApplication:setUp()
     self.savedLove = stubLove()
+    TitleSpy.value = nil
     package.loaded["Application"] = nil
     package.loaded["core.Application"] = nil
     -- Force re-require so the stubbed love is picked up.
@@ -172,6 +176,25 @@ function TestApplication:test_bind_and_make()
     app:bind("custom", { hello = "world" })
     local c = app:make("custom")
     self:assertEquals(c.hello, "world")
+end
+
+function TestApplication:test_window_title_applied_from_config()
+    local Application = require("core.Application")
+    local app = Application:new()
+    app:boot()
+    -- config/game.lua has `title = "i-love-boilerplate"` by default
+    local expected = app:config():get("game.title")
+    self:assertEquals(TitleSpy.value, expected)
+end
+
+function TestApplication:test_window_title_changes_with_config()
+    local Application = require("core.Application")
+    local app = Application:new()
+    app:boot()
+    -- Simulate a user editing config/game.lua
+    app:config():set("game.title", "Pocket Dungeon")
+    app:applyWindowConfig()
+    self:assertEquals(TitleSpy.value, "Pocket Dungeon")
 end
 
 return TestApplication

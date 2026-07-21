@@ -24,8 +24,32 @@ love .
 & "C:\Program Files\LOVE\love.exe" .
 ```
 
+Or use the helper scripts (auto-detect LÖVE's install path):
+
+```bash
+# Windows
+.\run.bat             # normal mode
+.\run.bat --console   # with console output
+
+# macOS / Linux
+./run.sh
+```
+
 You should see a black window with "Loading..." briefly, then the
 main menu with three buttons: Play, Options, Quit.
+
+> **Note on `lovec`**: Some Windows builds of the LÖVE console binary
+> (`lovec.exe`) report the source base one level too high when given a
+> relative path. `main.lua` probes several candidate roots and picks
+> the one that actually contains the framework, so the project still
+> boots — but if you hit the same issue, use `love.exe` directly or
+> pass an absolute path:
+>
+> ```powershell
+> & "C:\Program Files\LOVE\love.exe" .
+> # or
+> lovec "C:\path\to\i-love-boilerplate"
+> ```
 
 ## 3. Open it in your editor
 

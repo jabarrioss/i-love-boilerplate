@@ -7,8 +7,65 @@
 -- ---------------------------------------------------------------------------
 -- Module path setup
 -- ---------------------------------------------------------------------------
+-- Some LÖVE builds (notably `lovec` on certain Windows installs) report
+-- a source base one level too high when given a relative path. We probe
+-- multiple candidates and pick the first one that actually contains the
+-- framework. This makes the project robust regardless of how it was
+-- invoked.
+local function fileExists(path)
+    local f = io.open(path, "r")
+    if f then f:close(); return true end
+    return false
+end
+
 local function setupPaths()
-    local root = love.filesystem.getSourceBaseDirectory() or "."
+    local candidates = {}
+
+    -- 1) LÖVE's own source base.
+    local sb = love.filesystem.getSourceBaseDirectory()
+    if sb then
+        sb = sb:gsub("\\", "/"):gsub("/$", "")
+        table.insert(candidates, sb)
+        -- 1a) Sometimes `lovec .` reports the parent dir; try one level up.
+        table.insert(candidates, sb .. "/..")
+    end
+
+    -- 2) Directory of main.lua (always correct in normal cases).
+    local info = debug.getinfo(1, "S")
+    if info and info.source then
+        local src = info.source:sub(2) -- strip leading '@'
+        src = src:gsub("\\", "/"):gsub("/main%.lua$", ""):gsub("/main$", "")
+        if src and #src > 0 and src ~= sb then
+            table.insert(candidates, src)
+        end
+    end
+
+    -- 3) OS-level cwd (handles `lovec .` from a parent directory).
+    local pipe = io.popen("cd")
+    if pipe then
+        local cwd = pipe:read("*l")
+        pipe:close()
+        if cwd and #cwd > 0 then
+            cwd = cwd:gsub("\\", "/"):gsub("/$", "")
+            table.insert(candidates, cwd)
+            -- 3a) Convenience: if the cwd is the parent of a single
+            -- project folder, point at it directly.
+            if fileExists(cwd .. "/i-love-boilerplate/app/core/Application.lua") then
+                table.insert(candidates, cwd .. "/i-love-boilerplate")
+            end
+        end
+    end
+
+    -- Pick the first candidate that actually has our framework file.
+    local root = nil
+    for _, candidate in ipairs(candidates) do
+        if fileExists(candidate .. "/app/core/Application.lua") then
+            root = candidate
+            break
+        end
+    end
+    if not root then root = sb or "." end
+
     package.path = table.concat({
         package.path,
         root .. "/?.lua",

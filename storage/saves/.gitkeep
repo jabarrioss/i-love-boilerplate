@@ -1,0 +1,8 @@
+# storage
+
+Runtime data the framework writes on your behalf:
+- `saves/` — serialized Lua tables from `SaveManager`
+- `logs/` — `app.log` written by `Logger`
+
+Both folders are tracked via `.gitkeep` so the directories survive
+fresh clones, but the actual save/log files are in `.gitignore`.

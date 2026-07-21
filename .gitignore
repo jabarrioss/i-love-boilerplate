@@ -1,0 +1,39 @@
+# LÖVE build artifacts
+*.love
+*.love.zip
+
+# Windows executables
+*.exe
+*.dll
+
+# macOS app bundles
+*.app/
+
+# Linux builds
+*.AppImage
+*.deb
+*.tar.gz
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.iml
+.DS_Store
+Thumbs.db
+
+# Lua
+*.luac
+luac.out
+
+# Logs and runtime data
+storage/logs/*.log
+storage/saves/*.dat
+storage/saves/*.lua
+!storage/saves/.gitkeep
+!storage/logs/.gitkeep
+
+# Vendor (third-party libs are tracked separately if you want)
+# lib/*/
+# !lib/.gitkeep

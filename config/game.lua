@@ -1,6 +1,6 @@
 -- config/game.lua — game-wide gameplay settings.
 return {
-    title  = "i-love-boilerplate",
+    title = "i-love-boilerplate",
     author = "Your Name",
     version = "0.1.0",
 

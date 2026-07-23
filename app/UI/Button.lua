@@ -24,12 +24,13 @@ Button.defaults = {
 }
 
 function Button:new(opts)
+    local instance = setmetatable({}, self)
     opts = opts or {}
-    for k, v in pairs(Button.defaults) do self[k] = v end
-    for k, v in pairs(opts) do self[k] = v end
-    self.hovered = false
-    self.pressed = false
-    return self
+    for k, v in pairs(Button.defaults) do instance[k] = v end
+    for k, v in pairs(opts) do instance[k] = v end
+    instance.hovered = false
+    instance.pressed = false
+    return instance
 end
 
 function Button:update(dt)

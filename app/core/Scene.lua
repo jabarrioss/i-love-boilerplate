@@ -24,11 +24,12 @@ local Class = require("core.Class")
 local Scene = Class:extend("Scene")
 
 function Scene:new(name, opts)
-    self.name = name or "Scene"
-    self.app  = nil
-    self.opts = opts or {}
-    self.alive = true
-    return self
+    local instance = setmetatable({}, self)
+    instance.name = name or "Scene"
+    instance.app  = nil
+    instance.opts = opts or {}
+    instance.alive = true
+    return instance
 end
 
 function Scene:setApp(app)

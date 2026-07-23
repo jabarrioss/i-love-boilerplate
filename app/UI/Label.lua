@@ -8,16 +8,17 @@ local Color = require("Utils.color")
 local Label = Class:extend("Label")
 
 function Label:new(opts)
+    local instance = setmetatable({}, self)
     opts = opts or {}
-    self.x       = opts.x or 0
-    self.y       = opts.y or 0
-    self.text    = opts.text or ""
-    self.font    = opts.font
-    self.color   = opts.color or Color.WHITE
-    self.align   = opts.align or "left"   -- "left" | "center" | "right"
-    self.anchorX = opts.anchorX or 0      -- 0..1 in screen space if you use it later
-    self.anchorY = opts.anchorY or 0
-    return self
+    instance.x       = opts.x or 0
+    instance.y       = opts.y or 0
+    instance.text    = opts.text or ""
+    instance.font    = opts.font
+    instance.color   = opts.color or Color.WHITE
+    instance.align   = opts.align or "left"   -- "left" | "center" | "right"
+    instance.anchorX = opts.anchorX or 0      -- 0..1 in screen space if you use it later
+    instance.anchorY = opts.anchorY or 0
+    return instance
 end
 
 function Label:setText(text)

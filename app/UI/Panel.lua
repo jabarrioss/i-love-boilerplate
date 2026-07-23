@@ -13,16 +13,17 @@ local Color = require("Utils.color")
 local Panel = Class:extend("Panel")
 
 function Panel:new(opts)
+    local instance = setmetatable({}, self)
     opts = opts or {}
-    self.x      = opts.x or 0
-    self.y      = opts.y or 0
-    self.w      = opts.w or 200
-    self.h      = opts.h or 100
-    self.color  = opts.color or { r = 0, g = 0, b = 0, a = 0.6 }
-    self.border = opts.border or { r = 1, g = 1, b = 1, a = 0.3 }
-    self.radius = opts.radius or 4
-    self.children = opts.children or {}
-    return self
+    instance.x      = opts.x or 0
+    instance.y      = opts.y or 0
+    instance.w      = opts.w or 200
+    instance.h      = opts.h or 100
+    instance.color  = opts.color or { r = 0, g = 0, b = 0, a = 0.6 }
+    instance.border = opts.border or { r = 1, g = 1, b = 1, a = 0.3 }
+    instance.radius = opts.radius or 4
+    instance.children = opts.children or {}
+    return instance
 end
 
 function Panel:add(child)

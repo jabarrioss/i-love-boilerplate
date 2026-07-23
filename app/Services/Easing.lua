@@ -23,9 +23,10 @@ local Class = require("core.Class")
 local Easing = Class:extend("Easing")
 
 function Easing:new(app)
-    self.app = app
-    self._tweens = {}
-    return self
+    local instance = setmetatable({}, self)
+    instance.app = app
+    instance._tweens = {}
+    return instance
 end
 
 -- ----- Pure functions -----

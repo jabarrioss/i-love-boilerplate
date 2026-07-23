@@ -11,9 +11,10 @@ local EventCtor = require("core.Event")
 local EventService = Class:extend("EventService")
 
 function EventService:new(app)
-    self.app = app
-    self._bus = EventCtor:new()
-    return self
+    local instance = setmetatable({}, self)
+    instance.app = app
+    instance._bus = EventCtor:new()
+    return instance
 end
 
 function EventService:on(...)      return self._bus:on(...)      end

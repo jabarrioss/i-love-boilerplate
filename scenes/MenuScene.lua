@@ -18,7 +18,10 @@ function MenuScene:enter()
     self.buttons = {
         Button:new({ x = cx - 110, y = 200, w = 220, h = 48,
             text = "Play",
-            onClick = function() self:scenes():replace("GameScene") end,
+      onClick = function()
+        self:logger():info("Play button clicked")
+        self:scenes():replace("GameScene")
+      end,
             app = self.app,
         }),
         Button:new({ x = cx - 110, y = 260, w = 220, h = 48,

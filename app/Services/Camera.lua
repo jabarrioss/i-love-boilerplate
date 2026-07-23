@@ -16,19 +16,20 @@ local Class = require("core.Class")
 local Camera = Class:extend("Camera")
 
 function Camera:new(app)
-    self.app = app
+    local instance = setmetatable({}, self)
+    instance.app = app
     local w, h = 1280, 720
     if love and love.graphics then
         w, h = love.graphics.getDimensions()
     end
-    self.x, self.y           = w / 2, h / 2
-    self.zoom                = 1
-    self.rotation            = 0
-    self.following           = nil   -- entity or { x=, y= } ref
-    self.followLerp          = 4
-    self._shake              = { magnitude = 0, duration = 0, elapsed = 0 }
-    self._offset             = { x = 0, y = 0 }
-    return self
+    instance.x, instance.y   = w / 2, h / 2
+    instance._zoom           = 1
+    instance.rotation        = 0
+    instance.following       = nil   -- entity or { x=, y= } ref
+    instance.followLerp      = 4
+    instance._shake          = { magnitude = 0, duration = 0, elapsed = 0 }
+    instance._offset         = { x = 0, y = 0 }
+    return instance
 end
 
 function Camera:resize(w, h)
@@ -68,7 +69,8 @@ function Camera:moveBy(dx, dy)
 end
 
 function Camera:zoom(z)
-    self.zoom = math.max(0.01, z)
+    if z == nil then return self._zoom end
+    self._zoom = math.max(0.01, z)
     return self
 end
 
@@ -116,7 +118,7 @@ function Camera:attach()
     love.graphics.push()
     love.graphics.translate(w / 2 + self._offset.x, h / 2 + self._offset.y)
     love.graphics.rotate(self.rotation)
-    love.graphics.scale(self.zoom, self.zoom)
+    love.graphics.scale(self._zoom, self._zoom)
     love.graphics.translate(-self.x, -self.y)
 end
 
@@ -127,12 +129,12 @@ end
 
 function Camera:worldToScreen(wx, wy)
     local w, h = love.graphics.getDimensions()
-    return w / 2 + (wx - self.x) * self.zoom, h / 2 + (wy - self.y) * self.zoom
+    return w / 2 + (wx - self.x) * self._zoom, h / 2 + (wy - self.y) * self._zoom
 end
 
 function Camera:screenToWorld(sx, sy)
     local w, h = love.graphics.getDimensions()
-    return self.x + (sx - w / 2) / self.zoom, self.y + (sy - h / 2) / self.zoom
+    return self.x + (sx - w / 2) / self._zoom, self.y + (sy - h / 2) / self._zoom
 end
 
 return Camera

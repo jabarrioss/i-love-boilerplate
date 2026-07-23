@@ -12,12 +12,13 @@ local Player = Entity:extend("Player")
 Player.SPEED = 240
 
 function Player:new(x, y, opts)
-    Player.super.new(self, x, y, opts or {})
-    self.tag     = "player"
-    self.speed   = opts and opts.speed or Player.SPEED
-    self.accel   = 1500
-    self.friction = 0.85
-    return self
+    local instance = setmetatable({}, self)
+    instance:_init(x, y, opts or {})
+    instance.tag     = "player"
+    instance.speed   = opts and opts.speed or Player.SPEED
+    instance.accel   = 1500
+    instance.friction = 0.85
+    return instance
 end
 
 function Player:update(dt)

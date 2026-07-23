@@ -19,10 +19,11 @@ local Class = require("core.Class")
 local SceneManager = Class:extend("SceneManager")
 
 function SceneManager:new(app)
-    self.app = app
-    self._stack = {}
-    self._registry = {} -- name -> module path
-    return self
+    local instance = setmetatable({}, self)
+    instance.app = app
+    instance._stack = {}
+    instance._registry = {} -- name -> module path
+    return instance
 end
 
 function SceneManager:boot()

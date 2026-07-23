@@ -19,8 +19,9 @@ local Class = require("core.Class")
 local AssetManager = Class:extend("AssetManager")
 
 function AssetManager:new(app)
-    self.app = app
-    self._buckets = {
+    local instance = setmetatable({}, self)
+    instance.app = app
+    instance._buckets = {
         image = {},
         sound = {},
         music = {},
@@ -28,8 +29,8 @@ function AssetManager:new(app)
         data  = {},
         video = {},
     }
-    self._pendingLoads = 0
-    return self
+    instance._pendingLoads = 0
+    return instance
 end
 
 local function loadImage(path)           return love.graphics.newImage(path) end

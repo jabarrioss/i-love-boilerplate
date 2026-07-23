@@ -25,16 +25,17 @@ local Class = require("core.Class")
 local InputManager = Class:extend("InputManager")
 
 function InputManager:new(app)
-    self.app = app
-    self._bindings = {}      -- action -> { key1, key2, ... }
-    self._pressed  = {}      -- action -> [fn, fn, ...]
-    self._released = {}      -- action -> [fn, fn, ...]
-    self._held     = {}      -- action -> bool (polled in update)
-    self._justPressed = {}  -- action -> bool (true for one frame)
-    self._mouseX, self._mouseY = 0, 0
-    self._mouseDown = {}     -- button (1/2/3) -> bool
-    self._consumed = false   -- if a global binding handled the key, stop routing
-    return self
+    local instance = setmetatable({}, self)
+    instance.app = app
+    instance._bindings = {}      -- action -> { key1, key2, ... }
+    instance._pressed  = {}      -- action -> [fn, fn, ...]
+    instance._released = {}      -- action -> [fn, fn, ...]
+    instance._held     = {}      -- action -> bool (polled in update)
+    instance._justPressed = {}  -- action -> bool (true for one frame)
+    instance._mouseX, instance._mouseY = 0, 0
+    instance._mouseDown = {}     -- button (1/2/3) -> bool
+    instance._consumed = false   -- if a global binding handled the key, stop routing
+    return instance
 end
 
 function InputManager:boot()

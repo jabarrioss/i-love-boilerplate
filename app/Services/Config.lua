@@ -15,9 +15,10 @@ local Class = require("core.Class")
 local Config = Class:extend("Config")
 
 function Config:new(app)
-    self.app = app
-    self._store = {}
-    self._files = {
+    local instance = setmetatable({}, self)
+    instance.app = app
+    instance._store = {}
+    instance._files = {
         "app",
         "game",
         "input",
@@ -25,8 +26,8 @@ function Config:new(app)
         "assets",
         "scenes",
     }
-    self:load()
-    return self
+    instance:load()
+    return instance
 end
 
 function Config:load()

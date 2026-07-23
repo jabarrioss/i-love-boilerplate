@@ -14,14 +14,15 @@ local Class = require("core.Class")
 local AudioManager = Class:extend("AudioManager")
 
 function AudioManager:new(app)
-    self.app = app
-    self._channels = {
+    local instance = setmetatable({}, self)
+    instance.app = app
+    instance._channels = {
         sfx   = { volume = 1.0, sources = {} },
         music = { volume = 1.0, current = nil, target = nil, fadeSpeed = 1.0 },
     }
-    self._master = 1.0
-    self._muted  = false
-    return self
+    instance._master = 1.0
+    instance._muted  = false
+    return instance
 end
 
 function AudioManager:boot()

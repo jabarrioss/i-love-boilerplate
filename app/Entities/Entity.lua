@@ -23,6 +23,12 @@ local M = require("Utils.math")
 local Entity = Class:extend("Entity")
 
 function Entity:new(x, y, opts)
+    local instance = setmetatable({}, self)
+    instance:_init(x, y, opts)
+    return instance
+end
+
+function Entity:_init(x, y, opts)
     opts = opts or {}
     self.x       = x or 0
     self.y       = y or 0

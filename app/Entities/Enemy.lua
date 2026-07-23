@@ -9,12 +9,13 @@ local Enemy = Entity:extend("Enemy")
 Enemy.SPEED = 80
 
 function Enemy:new(x, y, opts)
-    Enemy.super.new(self, x, y, opts or {})
-    self.tag    = "enemy"
-    self.speed  = opts and opts.speed or Enemy.SPEED
-    self.target = nil
-    self.health = opts and opts.health or 1
-    return self
+    local instance = setmetatable({}, self)
+    instance:_init(x, y, opts or {})
+    instance.tag    = "enemy"
+    instance.speed  = opts and opts.speed or Enemy.SPEED
+    instance.target = nil
+    instance.health = opts and opts.health or 1
+    return instance
 end
 
 function Enemy:setTarget(target)

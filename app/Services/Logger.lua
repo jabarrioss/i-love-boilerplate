@@ -14,20 +14,21 @@ local LEVEL_NAMES = { [1] = "DEBUG", [2] = "INFO", [3] = "WARN", [4] = "ERROR", 
 local Logger = Class:extend("Logger")
 
 function Logger:new(app)
-    self.app = app
-    self._level = 2 -- info by default; raised/lowered by config
-    self._file  = "storage/logs/app.log"
-    self._maxBytes = 1024 * 1024 -- 1 MB rotation threshold
-    self._consoleColors = {
+    local instance = setmetatable({}, self)
+    instance.app = app
+    instance._level = 2 -- info by default; raised/lowered by config
+    instance._file  = "storage/logs/app.log"
+    instance._maxBytes = 1024 * 1024 -- 1 MB rotation threshold
+    instance._consoleColors = {
         [1] = "\27[36m", -- debug = cyan
         [2] = "\27[37m", -- info  = white
         [3] = "\27[33m", -- warn  = yellow
         [4] = "\27[31m", -- error = red
         [5] = "\27[35m", -- fatal = magenta
     }
-    self._reset = "\27[0m"
-    self:_syncFromConfig()
-    return self
+    instance._reset = "\27[0m"
+    instance:_syncFromConfig()
+    return instance
 end
 
 function Logger:_syncFromConfig()

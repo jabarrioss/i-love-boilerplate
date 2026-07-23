@@ -16,10 +16,11 @@ local Class = require("core.Class")
 local Scheduler = Class:extend("Scheduler")
 
 function Scheduler:new(app)
-    self.app = app
-    self._delayed  = {} -- { at = time, fn = fn, tag = tag, cancelled = false }
-    self._periodic = {} -- { every = sec, accumulator = 0, fn = fn, tag = tag, cancelled = false }
-    return self
+    local instance = setmetatable({}, self)
+    instance.app = app
+    instance._delayed  = {} -- { at = time, fn = fn, tag = tag, cancelled = false }
+    instance._periodic = {} -- { every = sec, accumulator = 0, fn = fn, tag = tag, cancelled = false }
+    return instance
 end
 
 function Scheduler:_now()

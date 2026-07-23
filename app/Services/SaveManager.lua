@@ -19,11 +19,12 @@ local Class = require("core.Class")
 local SaveManager = Class:extend("SaveManager")
 
 function SaveManager:new(app)
-    self.app = app
-    self._store = {}
-    self._slot  = "default"
-    self._dirty = false
-    return self
+    local instance = setmetatable({}, self)
+    instance.app = app
+    instance._store = {}
+    instance._slot  = "default"
+    instance._dirty = false
+    return instance
 end
 
 function SaveManager:boot()

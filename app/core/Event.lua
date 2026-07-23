@@ -25,9 +25,10 @@ local Class = require("core.Class")
 local Event = Class:extend("Event")
 
 function Event:new()
-    self._handlers = {}      -- event -> [{ fn, filter, once }, ...]
-    self._wildcard = {}      -- '*' subscribers
-    return self
+    local instance = setmetatable({}, self)
+    instance._handlers = {}      -- event -> [{ fn, filter, once }, ...]
+    instance._wildcard = {}      -- '*' subscribers
+    return instance
 end
 
 function Event:_add(name, fn, filter, once)

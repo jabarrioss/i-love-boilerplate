@@ -10,9 +10,10 @@ local SchedulerCtor = require("core.Scheduler")
 local Scheduler = Class:extend("Scheduler")
 
 function Scheduler:new(app)
-    self.app = app
-    self._core = SchedulerCtor:new(app)
-    return self
+    local instance = setmetatable({}, self)
+    instance.app = app
+    instance._core = SchedulerCtor:new(app)
+    return instance
 end
 
 function Scheduler:boot()

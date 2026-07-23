@@ -17,13 +17,14 @@ local Class = require("core.Class")
 local Random = Class:extend("Random")
 
 function Random:new(app)
-    self.app = app
-    self._state = 0
-    self._useLua = true
+    local instance = setmetatable({}, self)
+    instance.app = app
+    instance._state = 0
+    instance._useLua = true
     if app and app:config():get("app.random.seed") then
-        self:seed(app:config():get("app.random.seed"))
+        instance:seed(app:config():get("app.random.seed"))
     end
-    return self
+    return instance
 end
 
 function Random:seed(value)

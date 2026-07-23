@@ -213,12 +213,16 @@ function Application:update(dt)
     self._dt   = dt
     self._time = self._time + dt
 
-    self:make("input"):update(dt)
+    -- Order matters: scenes must run BEFORE the input manager clears its
+    -- "just pressed" flags, otherwise `input:pressed("jump")` polled from
+    -- a scene's :update() will always be false on the frame the key was
+    -- pressed (the clear would happen first). See InputManager:update.
     self:make("scheduler"):update(dt)
     self:make("audio"):update(dt)
     self:make("easing"):update(dt)
     self:make("camera"):update(dt)
     self:make("scenes"):update(dt)
+    self:make("input"):update(dt)  -- clears "just pressed" at end of frame
 end
 
 function Application:draw()

@@ -29,11 +29,10 @@ end
 
 function Facade:extend(name, key, resolver)
     -- The subclass's metatable will route unknown lookups to the container.
-    local facade = setmetatable({}, { __index = self, __call = function(_, ...) return ... end })
-    facade.__key      = key or name:lower()
-    facade.__resolver = resolver or function(app) return app end
-    facade.__name     = name
-    return setmetatable(facade, {
+    -- The __index metamethod resolves the underlying service on demand
+    -- and binds `target` as `self`, so `Scene:push("MenuScene")` ends up
+    -- calling `app:make("scenes"):push("MenuScene")`.
+    local facade = setmetatable({}, {
         __index = function(_, method)
             local app = Facade.__app
             if not app then error("Facade " .. name .. " used before Application:boot()") end
@@ -49,6 +48,10 @@ function Facade:extend(name, key, resolver)
         end,
         __tostring = function() return "Facade<" .. name .. ">" end,
     })
+    facade.__key      = key or name:lower()
+    facade.__resolver = resolver or function(app) return app end
+    facade.__name     = name
+    return facade
 end
 
 -- Helper: forward a static call to a method on the underlying service.

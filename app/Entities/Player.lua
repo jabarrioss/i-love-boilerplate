@@ -6,7 +6,6 @@
 ]]
 
 local Entity = require("Entities.Entity")
-local InputManager = require("Services.InputManager")
 
 local Player = Entity:extend("Player")
 

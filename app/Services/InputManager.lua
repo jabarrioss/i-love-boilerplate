@@ -124,7 +124,10 @@ function InputManager:handleKey(phase, key, scancode, isrepeat)
 end
 
 function InputManager:update(dt)
-    -- Clear "just pressed" every frame so consumers can read it for one tick.
+    -- Clear "just pressed" so each press is visible for exactly one frame.
+    -- IMPORTANT: Application:update() intentionally calls this AFTER
+    -- scenes:update(), so a scene can still read `input:pressed("jump")`
+    -- during its own :update() on the same frame the key was pressed.
     self._justPressed = {}
 end
 

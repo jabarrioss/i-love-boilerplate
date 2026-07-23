@@ -22,11 +22,18 @@ local Class = require("core.Class")
 local TestCase = Class:extend("TestCase")
 
 function TestCase:new(runner)
-    self.runner = runner
-    self.passed = 0
-    self.failed = 0
-    self.errors = {}
-    return self
+    -- Build a fresh instance with the class as its metatable, then
+    -- initialize per-test counters on the instance. (Earlier versions
+    -- did `self.runner = runner` directly, which mutated the *class*
+    -- because `self` in a `Class:new` is the class itself — every test
+    -- then shared the same counters, and the runner had to keep
+    -- indirecting through getmetatable to find any test methods.)
+    local inst = setmetatable({}, self)
+    inst.runner  = runner
+    inst.passed  = 0
+    inst.failed  = 0
+    inst.errors  = {}
+    return inst
 end
 
 function TestCase:setUp()    end
@@ -47,22 +54,23 @@ function TestCase:_runMethod(name, fn)
 end
 
 function TestCase:run()
-    for name, method in pairs(self) do
-        if type(method) == "function" and name:sub(1, 5) == "test_" then
-            self:_runMethod(name, method)
-        end
-    end
-    -- Also iterate the class hierarchy for inherited tests
-    local mt = getmetatable(self)
-    while mt and mt.__index and mt.__index ~= TestCase do
-        for name, method in pairs(mt.__index) do
-            if type(method) == "function" and name:sub(1, 5) == "test_" then
-                if not self[name] then
-                    self:_runMethod(name, function() method(self) end)
-                end
+    -- Walk the class chain from the most-derived class up to (but not
+    -- including) TestCase itself. For each class, run any test_*
+    -- methods we haven't already seen. We use `seen` so a subclass
+    -- that overrides a parent's test gets the override, not both.
+    local seen = {}
+    local node = getmetatable(self)        -- the most-derived class
+    while node and node ~= TestCase do
+        for name, method in pairs(node) do
+            if type(method) == "function"
+               and name:sub(1, 5) == "test_"
+               and not seen[name] then
+                seen[name] = true
+                self:_runMethod(name, method)
             end
         end
-        mt = getmetatable(mt.__index)
+        local mt = getmetatable(node)
+        node = mt and mt.__index or nil     -- parent class
     end
     return self
 end

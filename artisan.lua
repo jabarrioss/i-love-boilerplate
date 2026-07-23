@@ -20,13 +20,6 @@ local args = { ... }
 -- ---------------------------------------------------------------------------
 -- Utilities
 -- ---------------------------------------------------------------------------
-local function pascalToSnake(name)
-    return (name:gsub("(%u)", function(c, idx)
-        if idx == 1 then return c:lower() end
-        return "_" .. c:lower()
-    end))
-end
-
 local function writeFile(path, content)
     local file, err = io.open(path, "w")
     if not file then

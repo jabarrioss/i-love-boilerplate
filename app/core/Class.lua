@@ -19,16 +19,40 @@
         d:is(Animal)    -- true
 ]]
 
-local Class = {}
-Class.__index = Class
+local Class
+-- Class itself is a "root" — no parent to inherit from above. We only
+-- install __call (so `Class()` works as a constructor shortcut) and
+-- __tostring. Subclasses get their own metatable via Class:extend.
+Class = setmetatable({}, {
+    __call     = function(c, ...) return c:new(...) end,
+    __tostring = function() return "Class<Class>" end,
+})
+Class.__index = Class    -- own field; instances created via setmetatable({}, Class)
+                          -- will resolve field lookups starting here
 
 function Class:extend(name)
-    local cls = setmetatable({}, { __index = self, __call = function(c, ...) return c:new(...) end })
-    cls.__index      = cls
-    cls.__tostring   = function() return "Class<" .. (name or "?") .. ">" end
-    cls.super        = self
-    cls.className    = name
-    setmetatable(cls, { __index = self, __call = cls })
+    -- Two pieces are important here:
+    --
+    --   1. The metatable's __index is `self` (the parent class), so lookups
+    --      on the class fall through to inherited methods.
+    --   2. `cls.__index` is set as an OWN field on the class (not the
+    --      metatable). When an instance is constructed with
+    --      `setmetatable({}, cls)`, the class's __index becomes the
+    --      instance's lookup chain — so instance lookups start at `cls`
+    --      before walking up to the parent.
+    --
+    -- The metatable also installs a __call so `MyClass(...)` is shorthand
+    -- for `MyClass:new(...)`. This must be a function (not the class
+    -- itself), otherwise calling it would invoke the class's __call again
+    -- and recurse forever.
+    local cls = setmetatable({}, {
+        __index    = self,
+        __call     = function(c, ...) return c:new(...) end,
+        __tostring = function() return "Class<" .. (name or "?") .. ">" end,
+    })
+    cls.__index   = cls
+    cls.super     = self
+    cls.className = name
     return cls
 end
 

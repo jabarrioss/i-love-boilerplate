@@ -41,6 +41,14 @@ function Entity:new(x, y, opts)
     self.oy      = opts.oy or 0
     self.scaleX  = opts.scaleX or 1
     self.scaleY  = opts.scaleY or 1
+    self.app     = nil           -- set by the spawning scene; nil until then
+    return self
+end
+
+-- Wire the entity to an Application so it can call self.app:input(),
+-- self.app:emit(...), etc. Returns self for chaining.
+function Entity:setApp(app)
+    self.app = app
     return self
 end
 

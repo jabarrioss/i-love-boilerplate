@@ -13,14 +13,13 @@ local GameScene = Scene:extend("GameScene")
 
 function GameScene:enter()
     local w, h = love.graphics.getDimensions()
-    self.player = Player:new(w / 2, h / 2, { w = 28, h = 28, speed = 240 })
-    self.player.app = self.app
+    self.player = Player:new(w / 2, h / 2, { w = 28, h = 28, speed = 240 }):setApp(self.app)
 
     self.enemies = {}
     for i = 1, 3 do
         local e = Enemy:new(100 + i * 200, 100 + (i % 2) * 200, { w = 24, h = 24, speed = 80 })
-        e.app = self.app
-        e:setTarget(self.player)
+            :setApp(self.app)
+            :setTarget(self.player)
         table.insert(self.enemies, e)
     end
 
@@ -44,15 +43,23 @@ function GameScene:enter()
         }),
     }
 
-    self.app:on("enemy:killed", function(enemy)
+    -- Keep a reference so exit() can unsubscribe.
+    self._onEnemyKilled = function(enemy)
         self.score = self.score + self:config():get("game.gameplay.scorePerKill", 100)
         self.ui.scoreLabel:setText("Score: " .. self.score)
-    end)
+    end
+    self.app:on("enemy:killed", self._onEnemyKilled)
 end
 
 function GameScene:exit()
     -- Detach listeners when leaving to avoid stacking across scene restarts.
-    -- (For a one-shot enemy:killed handler, you can leave it; for menu reloads, do this.)
+    -- Each time GameScene re-enters, enter() re-registers a fresh handler;
+    -- without this off() call the old ones would linger and the score
+    -- would tick up multiple times per kill.
+    if self._onEnemyKilled then
+        self.app:off("enemy:killed", self._onEnemyKilled)
+        self._onEnemyKilled = nil
+    end
 end
 
 function GameScene:update(dt)
@@ -70,8 +77,8 @@ function GameScene:update(dt)
             elseif side == 3 then nx, ny = self:random():number(0, w), 0
             else nx, ny = self:random():number(0, w), h end
             local fresh = Enemy:new(nx, ny, { w = 24, h = 24, speed = 80 })
-            fresh.app = self.app
-            fresh:setTarget(self.player)
+                :setApp(self.app)
+                :setTarget(self.player)
             self.enemies[i] = fresh
         end
     end

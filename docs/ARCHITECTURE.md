@@ -21,12 +21,12 @@ After boot, the framework simply routes LÖVE callbacks:
 
 ```
 love.update(dt)  →  Application:update(dt)
-                       ├── input:update(dt)      (clear "just pressed")
                        ├── scheduler:update(dt)  (run timers)
                        ├── audio:update(dt)      (music fade, SFX reap)
                        ├── easing:update(dt)     (advance tweens)
                        ├── camera:update(dt)     (smooth follow, shake)
-                       └── scenes:update(dt)     (top of stack)
+                       ├── scenes:update(dt)     (top of stack — reads input)
+                       └── input:update(dt)      (clear "just pressed" last)
 
 love.draw()      →  Application:draw()
                        ├── scenes:draw()

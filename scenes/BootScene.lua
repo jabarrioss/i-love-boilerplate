@@ -14,24 +14,24 @@ function BootScene:loadAssets()
     local assets = self:assets()
     local cfg = self:config()
 
-    for name, spec in pairs(cfg:get("audio.images", {}) or {}) do
+    for name, spec in pairs(cfg:get("assets.images", {}) or {}) do
         if type(spec) == "string" then
             assets:load("image", name, spec)
         elseif type(spec) == "table" then
             assets:load("image", name, spec[1])
         end
     end
-    for name, spec in pairs(cfg:get("audio.sounds", {}) or {}) do
+    for name, spec in pairs(cfg:get("assets.sounds", {}) or {}) do
         if type(spec) == "string" then
             assets:load("sound", name, spec)
         end
     end
-    for name, spec in pairs(cfg:get("audio.music", {}) or {}) do
+    for name, spec in pairs(cfg:get("assets.music", {}) or {}) do
         if type(spec) == "string" then
             assets:load("music", name, spec)
         end
     end
-    for name, spec in pairs(cfg:get("audio.fonts", {}) or {}) do
+    for name, spec in pairs(cfg:get("assets.fonts", {}) or {}) do
         if type(spec) == "table" then
             assets:load("font", name, spec[1], spec[2])
         end

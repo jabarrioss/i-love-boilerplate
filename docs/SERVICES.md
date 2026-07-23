@@ -71,7 +71,7 @@ assets:unload("image", "player")
 assets:unloadAll()
 ```
 
-For boot-time asset declarations, see `config/audio.lua` — the
+For boot-time asset declarations, see `config/assets.lua` — the
 `BootScene` reads it and loads everything automatically.
 
 ---

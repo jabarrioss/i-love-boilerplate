@@ -10,17 +10,51 @@ table; values are looked up with dotted paths.
 | `config/app.lua`     | Framework/runtime settings             |
 | `config/game.lua`    | Game-wide gameplay settings            |
 | `config/input.lua`   | Key bindings                           |
-| `config/audio.lua`   | Audio levels + asset declarations      |
+| `config/audio.lua`   | Audio runtime settings (volumes, channels) |
+| `config/assets.lua`  | Asset declarations (paths to images / sounds / music / fonts) |
 | `config/scenes.lua`  | Boot scene + scene registry            |
 
 Add your own files by listing them in `Config:_files`:
 
 ```lua
 -- app/Services/Config.lua
-self._files = { "app", "game", "input", "audio", "scenes", "balance" }
+self._files = { "app", "game", "input", "audio", "assets", "scenes", "balance" }
 ```
 
 Or just place new tables inside an existing file.
+
+## Where do I declare assets?
+
+`config/assets.lua`. The `BootScene` reads it on startup and asks
+the `AssetManager` to load each entry.
+
+```lua
+-- config/assets.lua
+return {
+    images = {
+        player = "assets/images/player.png",
+    },
+    sounds = {
+        hit = "assets/sounds/hit.wav",
+    },
+    music = {
+        theme = "assets/music/theme.ogg",
+    },
+    fonts = {
+        title = { "assets/fonts/title.ttf", 32 },
+    },
+}
+```
+
+After boot, access them by name:
+
+```lua
+local img  = self:assets():get("image", "player")
+local font = self:assets():get("font", "title")
+```
+
+`config/audio.lua` is reserved for runtime audio settings (master
+volume, channel levels, mute). It no longer carries asset paths.
 
 ## Reading
 

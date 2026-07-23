@@ -22,6 +22,7 @@ function Config:new(app)
         "game",
         "input",
         "audio",
+        "assets",
         "scenes",
     }
     self:load()

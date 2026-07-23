@@ -115,7 +115,11 @@ function SaveManager:save(slot)
     slot = slot or self._slot
     self._slot = slot
     local content = "return " .. serialize(self._store)
-    local path = "storage/saves/" .. slot .. ".lua"
+    local dir  = "storage/saves"
+    local path = dir .. "/" .. slot .. ".lua"
+    -- LÖVE doesn't create parent directories on write; ensure they exist
+    -- first. createDirectory is idempotent (no-op if the dir already exists).
+    love.filesystem.createDirectory(dir)
     local ok, err = love.filesystem.write(path, content)
     if not ok then
         self.app:logger():error("SaveManager:save('%s') failed: %s", slot, tostring(err))
